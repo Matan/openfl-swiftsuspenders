@@ -109,11 +109,6 @@ class MacroReflector implements Reflector
 	{
 		var typeMeta = Meta.getType(classType);
 
-		#if debug
-		if(typeMeta != null && Reflect.hasField(typeMeta, "interface"))
-			throw "Interfaces can't be used as instantiatable classes.";
-		#end
-
 		var description : TypeDescription = new TypeDescription(false);
 		var fieldsMeta = getFields(classType);
 		var fields : Array<String> = Reflect.fields(fieldsMeta);
@@ -126,6 +121,10 @@ class MacroReflector implements Reflector
 		{
 			//trace(typeMeta);
 			//trace(fieldsMeta);
+
+			// Check if the class has constructor injections, if not, put no params point.
+			if(fields.indexOf("_") == -1)
+				description.ctor = new NoParamsConstructorInjectionPoint();
 
 			for(field in fields)
 			{
