@@ -7,8 +7,7 @@
 
 package org.swiftsuspenders;
 
-import openfl.errors.Error;
-import org.swiftsuspenders.reflection.DescribeTypeRTTIReflector;
+import org.swiftsuspenders.reflection.MacroReflector;
 import org.swiftsuspenders.utils.CallProxy;
 import org.swiftsuspenders.utils.UID;
 
@@ -165,7 +164,7 @@ import org.swiftsuspenders.utils.TypeDescriptor;
  * injections are started.
  */
 @:keepSub
-class Injector extends EventDispatcher
+#if !macro @:build(org.swiftsuspenders.Macro.addMetadata()) #end class Injector extends EventDispatcher
 {
 	//----------------------       Private / Protected Properties       ----------------------//
 	private static var INJECTION_POINTS_CACHE = new Map<String,TypeDescription>();
@@ -256,7 +255,7 @@ class Injector extends EventDispatcher
 		return value;
 	}
 	
-	private static var _baseTypes:Array<String> = initBaseTypeMappingIds([Dynamic, Array, Class/*, Function*//*, Bool*/, Float, Int, UInt, String]);
+	private static var _baseTypes:Array<String> = initBaseTypeMappingIds([Dynamic, Array, Class, /*Float, Int, UInt, */String]);
 
  	private static function initBaseTypeMappingIds(types:Array<Dynamic>):Array<String>
 	{
@@ -266,6 +265,12 @@ class Injector extends EventDispatcher
 		{
 			returnArray.push(CallProxy.replaceClassName(types[i]) + '|');
 		}
+
+		// FIXME: Totally gross, until a better solution is found
+		returnArray.push("Float|");
+		returnArray.push("Int|");
+		returnArray.push("UInt|");
+
 		return returnArray;
 	}
 	
@@ -274,12 +279,12 @@ class Injector extends EventDispatcher
 
 
 	//----------------------               Public Methods               ----------------------//
-	public function new()
+	public function new(reflector:Class<Reflector> = null)
 	{
 		_mappings = new Map<String,InjectionMapping>();
 		_mappingsInProcess = new Map<String,Bool>();
 		_managedObjects = new Map<String,Dynamic>();
-		_reflector = new DescribeTypeRTTIReflector();
+		_reflector = (reflector != null) ? Type.createInstance(reflector, []) : new MacroReflector();
 		_classDescriptor = new TypeDescriptor(_reflector, INJECTION_POINTS_CACHE);
 		this.applicationDomain = ApplicationDomain.currentDomain;
 		super();

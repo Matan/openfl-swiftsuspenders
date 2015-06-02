@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	<!-- ~~~~~~~~~~~~~~~~~~~ META ~~~~~~~~~~~~~~~~~~~ -->
+	<meta title="SwiftSuspender Test" package="org.swiftsuspenders.tests" version="1.0.0" />
+	<app main="Test" path="bin" file="js/tests" />
+
+	<!-- ~~~~~~~~~~~~~~~~~~~ SOURCE ~~~~~~~~~~~~~~~~~~~ -->
+	<source path="test" />
+	<source path="src" />
+
+	<!-- ~~~~~~~~~~~~~~~~~~~ LIBS ~~~~~~~~~~~~~~~~~~~ -->
+	<haxelib name="openfl" />
+
+	<!-- ~~~~~~~~~~~~~~~~~~~ CONF  ~~~~~~~~~~~~~~~~~~~-->
+	<!-- temp optimization flag for 3.2.0 - see release notes -->
+	<haxedef name="analyzer" />
+
+	<!-- code stripping level -->
+	<haxeflag name="-dce" value="std" />
+</project>
