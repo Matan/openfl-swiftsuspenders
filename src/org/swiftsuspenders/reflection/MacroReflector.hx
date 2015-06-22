@@ -122,6 +122,8 @@ class MacroReflector implements Reflector
 			//trace(typeMeta);
 			//trace(fieldsMeta);
 
+			var postConstructors : Array<Dynamic> = [];
+
 			// Check if the class has constructor injections, if not, put no params point.
 			if(fields.indexOf("_") == -1)
 				description.ctor = new NoParamsConstructorInjectionPoint();
@@ -148,13 +150,21 @@ class MacroReflector implements Reflector
 					}
 					else if(post) // post construction
 					{
-						addPostConstructMethodPoints(description, field, fieldMeta);
+						postConstructors.push({description:description, field:field, fieldMeta:fieldMeta});
+						//addPostConstructMethodPoints(description, field, fieldMeta);
 					}
 				}
 				else if(type != null) // property
 				{
 					addFieldInjectionPoints(description, field, fieldMeta);
 				}
+			}
+
+			var iL : Int = postConstructors.length;
+			for(i in 0...iL)
+			{
+				var item : Dynamic = postConstructors[i];
+				addPostConstructMethodPoints(item.description, item.field, item.fieldMeta);
 			}
 		}
 
