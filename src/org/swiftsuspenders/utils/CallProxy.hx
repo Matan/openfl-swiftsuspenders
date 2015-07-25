@@ -57,7 +57,15 @@ class CallProxy
 	
 	public static function createInstance<T>( cl : Class<T>, args : Array<Dynamic> ) : T
 	{
-		var instance = Type.createInstance(cl, args);
+		var instance : T = null;
+		try
+		{
+			instance = Type.createInstance(cl, args);
+		}
+		catch(error : String)
+		{
+			throw('Could not create instance of ${Type.getClassName(cl)}. Ensure it has a constructor.');
+		}
 		return instance;
 	}
 }
